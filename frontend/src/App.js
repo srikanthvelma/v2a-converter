@@ -1,24 +1,74 @@
-import logo from './logo.svg';
-import './App.css';
+
+import React, { useState } from 'react';
+import { Container, Typography, Box, Button, LinearProgress, Card, CardContent } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 function App() {
+  const [file, setFile] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [status, setStatus] = useState('');
+  const [audioUrl, setAudioUrl] = useState('');
+
+  const handleFileChange = (e) => {
+    setFile(e.target.files[0]);
+    setStatus('');
+    setAudioUrl('');
+  };
+
+  const handleUpload = () => {
+    if (!file) return;
+    setUploading(true);
+    setStatus('Uploading...');
+    // Simulate upload and conversion
+    setTimeout(() => {
+      setUploading(false);
+      setStatus('Conversion complete!');
+      setAudioUrl('/sample-audio.mp3'); // Placeholder
+    }, 3000);
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Container maxWidth="sm" sx={{ mt: 6 }}>
+      <Card>
+        <CardContent>
+          <Typography variant="h4" align="center" gutterBottom>
+            Video to Audio Converter
+          </Typography>
+          <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={<CloudUploadIcon />}
+            >
+              Upload Video
+              <input type="file" accept="video/*" hidden onChange={handleFileChange} />
+            </Button>
+            {file && <Typography variant="body1">Selected: {file.name}</Typography>}
+            <Button
+              variant="outlined"
+              onClick={handleUpload}
+              disabled={!file || uploading}
+              sx={{ mt: 2 }}
+            >
+              Convert to Audio
+            </Button>
+            {uploading && <LinearProgress sx={{ width: '100%', mt: 2 }} />}
+            {status && <Typography variant="body2" sx={{ mt: 2 }}>{status}</Typography>}
+            {audioUrl && (
+              <Button
+                variant="contained"
+                color="success"
+                href={audioUrl}
+                download
+                sx={{ mt: 2 }}
+              >
+                Download Audio
+              </Button>
+            )}
+          </Box>
+        </CardContent>
+      </Card>
+    </Container>
   );
 }
 
