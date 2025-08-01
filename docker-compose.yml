@@ -32,6 +32,8 @@ services:
     build: ./services/conversion
     ports:
       - "5002:5002"
+    volumes:
+      - audio-data:/data/audio
     networks:
       - v2a-net
 
@@ -42,13 +44,19 @@ services:
     networks:
       - v2a-net
 
+
   download:
     build: ./services/download
     ports:
       - "5004:5004"
+    volumes:
+      - audio-data:/data/audio
     networks:
       - v2a-net
 
 networks:
   v2a-net:
     driver: bridge
+
+volumes:
+  audio-data:

@@ -2,8 +2,9 @@ from flask import Flask, request, jsonify
 import os
 
 app = Flask(__name__)
-CONVERTED_FOLDER = 'converted'
-os.makedirs(CONVERTED_FOLDER, exist_ok=True)
+
+AUDIO_FOLDER = '/data/audio'
+os.makedirs(AUDIO_FOLDER, exist_ok=True)
 
 @app.route('/', methods=['GET'])
 def health():
@@ -17,7 +18,7 @@ def convert_video():
         return jsonify({'error': 'No filename provided'}), 400
     # Simulate conversion (in real app, run ffmpeg or similar)
     audio_filename = filename.rsplit('.', 1)[0] + '.mp3'
-    audio_path = os.path.join(CONVERTED_FOLDER, audio_filename)
+    audio_path = os.path.join(AUDIO_FOLDER, audio_filename)
     # Simulate file creation
     with open(audio_path, 'w') as f:
         f.write('FAKE AUDIO DATA')

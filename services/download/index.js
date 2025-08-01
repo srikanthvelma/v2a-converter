@@ -4,9 +4,9 @@ const fs = require('fs');
 const app = express();
 const port = 5004;
 
-const AUDIO_FOLDER = path.join(__dirname, 'audio');
+const AUDIO_FOLDER = '/data/audio';
 if (!fs.existsSync(AUDIO_FOLDER)) {
-  fs.mkdirSync(AUDIO_FOLDER);
+  fs.mkdirSync(AUDIO_FOLDER, { recursive: true });
 }
 
 // Health check
