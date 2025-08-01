@@ -13,9 +13,9 @@ app.get('/', (req, res) => {
 });
 
 // Example backend service URLs (change as needed for your environment)
-const VIDEO_UPLOAD_URL = 'http://localhost:5001/upload';
-const STATUS_URL = 'http://localhost:5002/status';
-const DOWNLOAD_URL = 'http://localhost:5003/download';
+const VIDEO_UPLOAD_URL = 'http://video-upload:5001/upload';
+const STATUS_URL = 'http://status:5003/status';
+const DOWNLOAD_URL = 'http://download:5004/download';
 
 // Forward upload to video-upload service
 app.post('/upload', async (req, res) => {
