@@ -1,9 +1,28 @@
 const express = require('express');
+const path = require('path');
+const fs = require('fs');
 const app = express();
-const port = 3002;
+const port = 5003;
 
+const AUDIO_FOLDER = path.join(__dirname, 'audio');
+if (!fs.existsSync(AUDIO_FOLDER)) {
+  fs.mkdirSync(AUDIO_FOLDER);
+}
+
+// Health check
 app.get('/', (req, res) => {
-  res.send('Download Service: Hello World!');
+  res.send('Download Service is running');
+});
+
+// Download endpoint
+app.get('/download/:id', (req, res) => {
+  // Simulate audio file download
+  const audioFile = path.join(AUDIO_FOLDER, req.params.id + '.mp3');
+  if (fs.existsSync(audioFile)) {
+    res.download(audioFile);
+  } else {
+    res.status(404).json({ error: 'Audio file not found' });
+  }
 });
 
 app.listen(port, () => {
