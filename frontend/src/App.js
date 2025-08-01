@@ -23,14 +23,14 @@ function App() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const response = await fetch('http://api-gateway:8080/upload', {
+      const response = await fetch('http://localhost:8080/upload', {
         method: 'POST',
         body: formData,
       });
       const data = await response.json();
       if (response.ok && data.audio_file) {
         setStatus('Conversion complete!');
-        setAudioUrl(`http://api-gateway:8080/download/${data.audio_file}`);
+        setAudioUrl(`http://localhost:8080/download/${data.audio_file}`);
       } else {
         setStatus(data.error || 'Error during upload/conversion');
       }
