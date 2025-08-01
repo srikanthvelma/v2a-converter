@@ -15,16 +15,29 @@ function App() {
     setAudioUrl('');
   };
 
-  const handleUpload = () => {
+  const handleUpload = async () => {
     if (!file) return;
     setUploading(true);
     setStatus('Uploading...');
-    // Simulate upload and conversion
-    setTimeout(() => {
-      setUploading(false);
-      setStatus('Conversion complete!');
-      setAudioUrl('/sample-audio.mp3'); // Placeholder
-    }, 3000);
+    setAudioUrl('');
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+      const response = await fetch('http://localhost:8080/upload', {
+        method: 'POST',
+        body: formData,
+      });
+      const data = await response.json();
+      if (response.ok && data.audio_file) {
+        setStatus('Conversion complete!');
+        setAudioUrl(`http://localhost:8080/download/${data.audio_file}`);
+      } else {
+        setStatus(data.error || 'Error during upload/conversion');
+      }
+    } catch (err) {
+      setStatus('Error: ' + err.message);
+    }
+    setUploading(false);
   };
 
   return (

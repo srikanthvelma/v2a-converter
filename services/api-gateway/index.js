@@ -14,16 +14,33 @@ app.get('/', (req, res) => {
 
 // Example backend service URLs (change as needed for your environment)
 const VIDEO_UPLOAD_URL = 'http://video-upload:5001/upload';
+const CONVERSION_URL = 'http://conversion:5002/convert';
 const STATUS_URL = 'http://status:5003/status';
 const DOWNLOAD_URL = 'http://download:5004/download';
 
 // Forward upload to video-upload service
-app.post('/upload', async (req, res) => {
+const FormData = require('form-data');
+const multer = require('multer');
+const upload = multer();
+
+// Accept multipart/form-data from frontend
+app.post('/upload', upload.single('file'), async (req, res) => {
   try {
-    const response = await axios.post(VIDEO_UPLOAD_URL, req.body, { headers: req.headers });
-    res.json(response.data);
+    // Forward file to video-upload service
+    const form = new FormData();
+    form.append('file', req.file.buffer, req.file.originalname);
+    const uploadResponse = await axios.post(VIDEO_UPLOAD_URL, form, {
+      headers: form.getHeaders(),
+    });
+    const { filename } = uploadResponse.data;
+
+    // Call conversion service with filename
+    const convertResponse = await axios.post(CONVERSION_URL, { filename });
+    const { audio_file } = convertResponse.data;
+
+    res.json({ message: 'Upload and conversion complete', audio_file });
   } catch (err) {
-    res.status(500).json({ error: 'Error forwarding to video-upload service', details: err.message });
+    res.status(500).json({ error: 'Error in upload/conversion', details: err.message });
   }
 });
 
