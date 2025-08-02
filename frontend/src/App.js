@@ -28,7 +28,8 @@ function App() {
         body: formData,
       })
         .then(response => {
-    return response.json(); // Add this return statement
+          console.log( 'Response:', response);
+          return response.json(); // Add this return statement
         })
         .then(data => console.log(data))
         .catch(error => console.error(error));
