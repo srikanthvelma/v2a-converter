@@ -1,8 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { Container, Typography, Box, Button, LinearProgress, Card, CardContent } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+
 
 const App = () => {
   const [videoId, setVideoId] = useState('');
@@ -14,13 +12,14 @@ const App = () => {
     const videoFile = event.target.files[0];
     const videoId = uuidv4();
     setVideoId(videoId);
-    axios.post('/upload', { videoId, videoFile })
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    fetch('/upload', {
+      method: 'POST',
+      body: JSON.stringify({ videoId, videoFile }),
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then((response) => response.json())
+      .then((data) => console.log(data))
+      .catch((error) => console.error(error));
   };
 
   const handleConvert = () => {
