@@ -26,18 +26,13 @@ function App() {
       const response = await fetch('http://192.168.29.135:8080/upload', {
         method: 'POST',
         body: formData,
-      })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-          } else {
-            return response.json();
-          }
-        })
-        .then(data => console.log(data))
-        .catch(error => console.error(error));
+      });
+      if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+      }
+        
       const data = await response.json();
-      if (response.ok && data.audio_file) {
+      if (data.audio_file) {
         setStatus('Conversion complete!');
         setAudioUrl(`http://192.168.29.135:8080/download/${data.audio_file}`);
       } else {
