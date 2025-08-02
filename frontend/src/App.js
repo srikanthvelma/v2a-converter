@@ -1,56 +1,90 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import './App.css';
 
-export default function App() {
-  const [videoFile, setVideoFile] = useState(null);
-  const [jobId, setJobId] = useState('');
-  const [audioUrl, setAudioUrl] = useState('');
-  const [status, setStatus] = useState('');
+const API_BASE = process.env.REACT_APP_API_BASE || "http://localhost:8000";
+const STATUS_BASE = process.env.REACT_APP_STATUS_BASE || "http://localhost:8001";
+const DOWNLOAD_BASE = process.env.REACT_APP_DOWNLOAD_BASE || "http://localhost:8002";
 
-  const handleFileChange = (e) => {
-    setVideoFile(e.target.files[0]);
-  };
+function App() {
+  const [video, setVideo] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [status, setStatus] = useState(null);
+  const [audioUrl, setAudioUrl] = useState(null);
 
   const handleUpload = async () => {
+    if (!video) return alert('Please select a video file first.');
+
     const formData = new FormData();
-    formData.append('video', videoFile);
+    formData.append('file', video);
+    setUploading(true);
+    setStatus(null);
+    setAudioUrl(null);
 
-    const res = await axios.post('http://localhost:8000/upload', formData);
-    setJobId(res.data.job_id);
-    setStatus('Processing...');
+    try {
+      const uploadRes = await axios.post(
+        `${API_BASE}/upload`,
+        formData
+      );
+      const { video_id } = uploadRes.data;
 
-    // Polling for job completion
-    const interval = setInterval(async () => {
-      const statusRes = await axios.get(`http://localhost:8002/status/${res.data.job_id}`);
-      if (statusRes.data.status === 'completed') {
-        clearInterval(interval);
-        setAudioUrl(`http://localhost:8002/audio/${res.data.job_id}.mp3`);
-        setStatus('Done!');
-      }
-    }, 2000);
+      const pollStatus = async () => {
+        try {
+          const res = await axios.get(
+            `${STATUS_BASE}/status/${video_id}`
+          );
+          if (res.data.status === 'completed') {
+            setStatus('Completed');
+            setAudioUrl(`${DOWNLOAD_BASE}/download/${video_id}`);
+          } else {
+            setTimeout(pollStatus, 2000);
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      };
+
+      pollStatus();
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Upload failed. See console for details.');
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
-    <div className="p-4 max-w-lg mx-auto">
-      <h1 className="text-2xl font-bold mb-4">Video to Audio Converter</h1>
-      <input type="file" accept="video/*" onChange={handleFileChange} />
-      <button
-        className="mt-4 p-2 bg-blue-500 text-white rounded"
-        onClick={handleUpload}
-        disabled={!videoFile}
-      >
-        Upload & Convert
-      </button>
+    <div className="container">
+      <h1>🎬 Video to 🎧 Audio Converter</h1>
+      <div className="card">
+        <label htmlFor="upload" className="upload-label">
+          Choose a video file
+        </label>
+        <input
+          id="upload"
+          type="file"
+          accept="video/*"
+          onChange={(e) => setVideo(e.target.files[0])}
+        />
+        <button onClick={handleUpload} disabled={uploading} className="convert-btn">
+          {uploading ? 'Uploading...' : 'Convert'}
+        </button>
 
-      <p className="mt-4">{status}</p>
-      {audioUrl && (
-        <a className="text-blue-600" href={audioUrl} download>
-          Download Audio
-        </a>
-      )}
+        {status && <p className="status">Status: {status}</p>}
+
+        {audioUrl && (
+          <div className="audio-section">
+            <p>Your audio file is ready:</p>
+            <audio controls src={audioUrl}></audio>
+            <br />
+            <a href={audioUrl} download className="download-link">
+              ⬇️ Download MP3
+            </a>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
 
-// Note: Ensure that the backend services are running on the specified ports (8000 for upload and 8002 for status/audio retrieval).
-// This code assumes that the backend is set up to handle the video upload and processing as described
+export default App;

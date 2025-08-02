@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  upload-service:
+    build:
+      context: ./services/upload-service
+      dockerfile: Dockerfile
+    container_name: upload-service
+    volumes:
+      - shared-data:/shared
+    ports:
+      - "8000:8000" 
+  
+  converter-service:
+    build:
+      context: ./services/converter-service
+      dockerfile: Dockerfile
+    container_name: converter-service 
+    volumes:  
+      - shared-data:/shared 
+    ports:
+      - "8001:8001"
+  
+  download-service:
+    build:
+      context: ./services/download-service
+      dockerfile: Dockerfile    
+    container_name: download-service
+    volumes:
+      - shared-data:/shared
+    ports:
+      - "8002:8002" 
+  
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    environment:
+      - REACT_APP_API_BASE=http://upload-service:8000
+      - REACT_APP_STATUS_BASE=http://download-service:8002
+      - REACT_APP_DOWNLOAD_BASE=http://download-service:8003
+    ports:
+      - "3000:3000"
+    depends_on:
+      - upload-service
+      - download-service
+
+volumes:      
+  shared-data:
