@@ -38,8 +38,8 @@ services:
     container_name: frontend
     environment:
       - REACT_APP_API_BASE=http://upload-service:8000
-      - REACT_APP_STATUS_BASE=http://download-service:8002
-      - REACT_APP_DOWNLOAD_BASE=http://download-service:8003
+      - REACT_APP_STATUS_BASE=http://download-service:8001
+      - REACT_APP_DOWNLOAD_BASE=http://download-service:8002
     ports:
       - "3000:3000"
     depends_on:

@@ -9,7 +9,7 @@ import requests
 os.makedirs("/shared/videos", exist_ok=True)
 
 UPLOAD_DIR = "/shared/videos"
-CONVERT_SERVICE_URL = "http://localhost:8001/convert"
+CONVERT_SERVICE_URL = "http://converter:8001/convert"
 
 app = FastAPI()
 
