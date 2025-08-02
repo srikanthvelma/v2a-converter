@@ -15,6 +15,8 @@ def health():
 @app.route('/convert', methods=['POST'])
 def convert_video():
     data = request.get_json()
+    if data is None:
+        return jsonify({'error': 'Invalid request data'}), 400
     filename = data.get('filename')
     if not filename:
         return jsonify({'error': 'No filename provided'}), 400
