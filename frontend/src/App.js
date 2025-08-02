@@ -23,14 +23,19 @@ function App() {
     try {
       const formData = new FormData();
       formData.append('file', file);
-      const response = await fetch('http://api-gateway:8080/upload', {
+      const response = await fetch('http://192.168.29.135:8080/upload', {
         method: 'POST',
         body: formData,
-      });
+      })
+        .then(response => {
+    return response.json(); // Add this return statement
+        })
+        .then(data => console.log(data))
+        .catch(error => console.error(error));
       const data = await response.json();
       if (response.ok && data.audio_file) {
         setStatus('Conversion complete!');
-        setAudioUrl(`http://api-gateway:8080/download/${data.audio_file}`);
+        setAudioUrl(`http://192.168.29.135:8080/download/${data.audio_file}`);
       } else {
         setStatus(data.error || 'Error during upload/conversion');
       }
