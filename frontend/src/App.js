@@ -3,7 +3,7 @@ import axios from "axios";
 import "./App.css";
 
 const API_BASE = process.env.REACT_APP_API_BASE || "http://upload:8000";
-const STATUS_BASE = process.env.REACT_APP_STATUS_BASE || "http://upload:8001";
+const STATUS_BASE = process.env.REACT_APP_STATUS_BASE || "http://converter:8001";
 const DOWNLOAD_BASE = process.env.REACT_APP_DOWNLOAD_BASE || "http://download:8002";
 
 function App() {
