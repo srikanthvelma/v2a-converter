@@ -23,6 +23,8 @@ const FormData = require('form-data');
 const multer = require('multer');
 const upload = multer();
 
+
+
 // Accept multipart/form-data from frontend
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
@@ -43,6 +45,20 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     res.status(500).json({ error: 'Error in upload/conversion', details: err.message });
   }
 });
+
+app.post('/convert', (req, res) => {
+  const videoId = req.body.videoId;
+  const conversionUrl = `http://conversion:5002/convert`;
+  axios.post(conversionUrl, { videoId })
+    .then((response) => {
+      res.json({ message: 'Conversion started', conversionId: response.data.conversionId });
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(500).json({ message: 'Error starting conversion' });
+    });
+});
+
 
 // Forward status to status service
 app.get('/status/:id', async (req, res) => {

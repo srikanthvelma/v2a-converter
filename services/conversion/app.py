@@ -15,17 +15,20 @@ def health():
 @app.route('/convert', methods=['POST'])
 def convert_video():
     data = request.get_json()
+    video_id = data.get('videoId')
+    if not video_id:
+        return jsonify({'error': 'No video ID provided'}), 400  
     if data is None:
         return jsonify({'error': 'Invalid request data'}), 400
     filename = data.get('filename')
     if not filename:
         return jsonify({'error': 'No filename provided'}), 400
     # Perform video-to-audio conversion using FFmpeg
-    input_file = os.path.join(UPLOAD_FOLDER, filename)
-    output_file = os.path.join(AUDIO_FOLDER, filename.rsplit('.', 1)[0] + '.mp3')
+    input_file = os.path.join(UPLOAD_FOLDER, video_id + '.mp4')
+    output_file = os.path.join(AUDIO_FOLDER, video_id + '.mp3')
     subprocess.run(['ffmpeg', '-i', input_file, '-vn', '-ar', '44100', '-ac', '2', '-ab', '192k', output_file])
-
-    return jsonify({'message': 'Conversion complete', 'audio_file': output_file})
+    return jsonify({'message': 'Conversion complete', 'conversionId': video_id})
+    
     # Simulate conversion (in real app, run ffmpeg or similar)
     audio_filename = filename.rsplit('.', 1)[0] + '.mp3'
     audio_path = os.path.join(AUDIO_FOLDER, audio_filename)

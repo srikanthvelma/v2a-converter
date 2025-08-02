@@ -15,14 +15,14 @@ app.get('/', (req, res) => {
 });
 
 // Download endpoint
-app.get('/download/:id', (req, res) => {
-  // Simulate audio file download
-  const audioFile = path.join(AUDIO_FOLDER, req.params.id + '.mp3');
-  if (fs.existsSync(audioFile)) {
-    res.download(audioFile);
-  } else {
-    res.status(404).json({ error: 'Audio file not found' });
+app.get('/download', (req, res) => {
+  const conversionId = req.query.conversionId;
+  if (!conversionId) {
+    return res.json({ message: 'No conversionId provided' });
   }
+  // Download the converted audio file
+  const audioFile = getAudioFile(conversionId);
+  res.download(audioFile);
 });
 
 app.listen(port, () => {

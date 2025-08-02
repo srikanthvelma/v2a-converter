@@ -11,15 +11,12 @@ def health():
 
 @app.route('/upload', methods=['POST'])
 def upload_video():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'}), 400
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'}), 400
-    filepath = os.path.join(UPLOAD_FOLDER, file.filename)
-    file.save(filepath)
-    # In a real app, trigger conversion here and return a job ID
-    return jsonify({'message': 'File uploaded successfully', 'filename': file.filename, 'job_id': '12345'})
+    video_file = request.files['video']
+    video_id = request.form['videoId']
+    if not video_id:
+        return jsonify({'error': 'No videoId provided'}), 400
+    video_file.save(os.path.join(UPLOAD_FOLDER, video_id + '.mp4'))
+    return jsonify({'message': 'Video uploaded successfully'})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5001)

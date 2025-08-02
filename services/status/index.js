@@ -10,9 +10,14 @@ app.get('/', (req, res) => {
 });
 
 // Status endpoint
-app.get('/status/:id', (req, res) => {
-  // Simulate job status
-  res.json({ job_id: req.params.id, status: 'completed' });
+app.get('/status', (req, res) => {
+  const conversionId = req.query.conversionId;
+  if (!conversionId) {
+    return res.json({ message: 'No conversionId provided' });
+  }
+  // Check the status of the conversion
+  const status = getStatus(conversionId);
+  res.json({ message: 'Conversion status', status });
 });
 
 app.listen(port, () => {
