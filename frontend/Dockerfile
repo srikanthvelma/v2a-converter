@@ -1,6 +1,7 @@
-FROM node:22-alpine3.21 as build
+FROM node:22-alpine3.21 AS build
 WORKDIR /app
 COPY package*.json ./
+RUN npm install axios
 RUN npm install --omit=dev
 COPY . .
 RUN npm run build
