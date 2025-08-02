@@ -28,8 +28,11 @@ function App() {
         body: formData,
       })
         .then(response => {
-          console.log( 'Response:', response);
-          return response.json(); // Add this return statement
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+          } else {
+            return response.json();
+          }
         })
         .then(data => console.log(data))
         .catch(error => console.error(error));
