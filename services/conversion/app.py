@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify
 import os
 
 app = Flask(__name__)
-
+UPLOAD_FOLDER = '/data/uploads'
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 AUDIO_FOLDER = '/data/audio'
 os.makedirs(AUDIO_FOLDER, exist_ok=True)
 

@@ -25,6 +25,8 @@ services:
     build: ./services/video-upload
     ports:
       - "5001:5001"
+    volumes:
+      - uploads-data:/data/uploads
     networks:
       - v2a-net
 
@@ -33,6 +35,7 @@ services:
     ports:
       - "5002:5002"
     volumes:
+      - uploads-data:/data/uploads
       - audio-data:/data/audio
     networks:
       - v2a-net
@@ -59,4 +62,6 @@ networks:
     driver: bridge
 
 volumes:
+  uploads-data:
   audio-data:
+
